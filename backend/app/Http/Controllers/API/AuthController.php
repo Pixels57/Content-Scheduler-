@@ -3,15 +3,30 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Interfaces\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    /**
+     * The auth service instance.
+     *
+     * @var AuthServiceInterface
+     */
+    protected $authService;
+    
+    /**
+     * Create a new controller instance.
+     *
+     * @param AuthServiceInterface $authService
+     * @return void
+     */
+    public function __construct(AuthServiceInterface $authService)
+    {
+        $this->authService = $authService;
+    }
+    
     /**
      * Register a new user.
      */
@@ -23,18 +38,12 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $result = $this->authService->register($validated);
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user,
-            'token' => $token,
+            'user' => $result['user'],
+            'token' => $result['token'],
         ], 201);
     }
 
@@ -48,19 +57,12 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($validated)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
-        }
-
-        $user = $request->user();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $result = $this->authService->login($validated);
 
         return response()->json([
             'message' => 'User logged in successfully',
-            'user' => $user,
-            'token' => $token,
+            'user' => $result['user'],
+            'token' => $result['token'],
         ]);
     }
 
@@ -69,7 +71,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $this->authService->logout($request->user());
 
         return response()->json([
             'message' => 'User logged out successfully',
@@ -97,21 +99,7 @@ class AuthController extends Controller
             'password' => 'sometimes|string|min:8|confirmed',
         ]);
 
-        $user = $request->user();
-        
-        if (isset($validated['name'])) {
-            $user->name = $validated['name'];
-        }
-        
-        if (isset($validated['email'])) {
-            $user->email = $validated['email'];
-        }
-        
-        if (isset($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
-        
-        $user->save();
+        $user = $this->authService->updateProfile($request->user(), $validated);
 
         return response()->json([
             'message' => 'Profile updated successfully',
