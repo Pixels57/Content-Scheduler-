@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Interfaces\PostRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,17 +48,9 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StorePostRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'image_url' => 'nullable|url',
-            'scheduled_time' => 'required|date',
-            'status' => 'required|in:draft,scheduled,published',
-            'platform_ids' => 'required|array',
-            'platform_ids.*' => 'exists:platforms,id',
-        ]);
+        $validated = $request->validated();
         
         $post = $this->postRepository->createPost($validated, $request->user()->id);
         
@@ -79,22 +73,14 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(UpdatePostRequest $request, string $id): JsonResponse
     {
         $post = $this->postRepository->getPostById($id);
         
         // Check if the post belongs to the authenticated user
         $this->authorize('update', $post);
         
-        $validated = $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'content' => 'sometimes|string',
-            'image_url' => 'nullable|url',
-            'scheduled_time' => 'sometimes|date',
-            'status' => 'sometimes|in:draft,scheduled,published',
-            'platform_ids' => 'sometimes|array',
-            'platform_ids.*' => 'exists:platforms,id',
-        ]);
+        $validated = $request->validated();
         
         $updatedPost = $this->postRepository->updatePost($id, $validated);
         
