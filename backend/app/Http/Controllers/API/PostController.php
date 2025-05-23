@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Requests\DeletePostRequest;
 use App\Interfaces\PostRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -90,12 +91,14 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(DeletePostRequest $request, string $id): JsonResponse
     {
         $post = $this->postRepository->getPostById($id);
         
         // Check if the post belongs to the authenticated user
         $this->authorize('delete', $post);
+
+        $validated = $request->validated();
         
         $this->postRepository->deletePost($id);
         
