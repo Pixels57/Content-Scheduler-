@@ -17,7 +17,7 @@ class PostRepository implements PostRepositoryInterface
      */
     public function getAllPosts(array $filters, int $userId): LengthAwarePaginator
     {
-        $query = Post::where('user_id', $userId);
+        $query = Post::where('user_id', $userId)->select('id', 'status', 'created_at', 'updated_at');
         
         // Apply status filter
         if (isset($filters['status']) && in_array($filters['status'], ['draft', 'scheduled', 'published'])) {
