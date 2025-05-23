@@ -91,27 +91,33 @@ class PostRepository implements PostRepositoryInterface
     public function updatePost(int $postId, array $newDetails): Post
     {
         $post = Post::findOrFail($postId);
+
+        if($post->status == 'scheduled' || $post->status == 'published') {
+
+            if (isset($newDetails['title'])) {
+                $post->title = $newDetails['title'];
+            }
+            
+            if (isset($newDetails['content'])) {
+                $post->content = $newDetails['content'];
+            }
+            
+            if (array_key_exists('image_url', $newDetails)) {
+                $post->image_url = $newDetails['image_url'];
+            }
+
+            if ($post->status == 'scheduled') {
+                if (isset($newDetails['scheduled_time'])) {
+                    $post->scheduled_time = $newDetails['scheduled_time'];
+                }
+            }
+            if (isset($newDetails['status'])) {
+                $post->status = $newDetails['status'];
+            }
+        }
         
         // Update post fields
-        if (isset($newDetails['title'])) {
-            $post->title = $newDetails['title'];
-        }
-        
-        if (isset($newDetails['content'])) {
-            $post->content = $newDetails['content'];
-        }
-        
-        if (array_key_exists('image_url', $newDetails)) {
-            $post->image_url = $newDetails['image_url'];
-        }
-        
-        if (isset($newDetails['scheduled_time'])) {
-            $post->scheduled_time = $newDetails['scheduled_time'];
-        }
-        
-        if (isset($newDetails['status'])) {
-            $post->status = $newDetails['status'];
-        }
+       
         
         $post->save();
         
