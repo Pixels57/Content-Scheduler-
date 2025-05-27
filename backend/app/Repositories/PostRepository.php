@@ -69,7 +69,9 @@ class PostRepository implements PostRepositoryInterface
         // Attach platforms if provided
         if (isset($postData['platform_ids']) && is_array($postData['platform_ids'])) {
             foreach ($postData['platform_ids'] as $platformId) {
-                $post->platforms()->attach($platformId);
+                if ($post->status == 'published') {
+                    $post->platforms()->attach($platformId);
+                }
             }
         }
         

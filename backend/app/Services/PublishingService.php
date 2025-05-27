@@ -54,10 +54,14 @@ class PublishingService implements PublishingServiceInterface
             // In a real application, this would actually call the platform's API
             // For this demo, we'll just simulate a successful publishing
             
-            // Update pivot table to mark as published
-            $post->platforms()->updateExistingPivot($platform->id, [
-                'platform_status' => 'published'
-            ]);
+            // Ensure the relationship exists in the pivot table
+            if (!$post->platforms->contains($platform->id)) {
+                $post->platforms()->attach($platform->id);
+            }
+            
+            // Update platform status if needed
+            // $platform->status = 'published'; // Uncomment if you have a status field on the platform table
+            // $platform->save();
             
             Log::info("Published post #{$post->id} to {$platform->name}");
             
@@ -69,10 +73,9 @@ class PublishingService implements PublishingServiceInterface
                 'error' => $e->getMessage()
             ]);
             
-            // Update pivot table to mark as failed
-            $post->platforms()->updateExistingPivot($platform->id, [
-                'platform_status' => 'failed'
-            ]);
+            // Update platform status if needed
+            // $platform->status = 'failed'; // Uncomment if you have a status field on the platform table
+            // $platform->save();
             
             return false;
         }
