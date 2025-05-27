@@ -18,6 +18,7 @@ class Platform extends Model
     protected $fillable = [
         'name',
         'type',
+        'status',
     ];
     
     /**
@@ -26,7 +27,6 @@ class Platform extends Model
     public function posts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, 'post_platform')
-            ->withPivot('platform_status')
             ->withTimestamps();
     }
 }

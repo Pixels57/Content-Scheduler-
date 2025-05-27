@@ -69,9 +69,7 @@ class PostRepository implements PostRepositoryInterface
         // Attach platforms if provided
         if (isset($postData['platform_ids']) && is_array($postData['platform_ids'])) {
             foreach ($postData['platform_ids'] as $platformId) {
-                $post->platforms()->attach($platformId, [
-                    'platform_status' => 'active'
-                ]);
+                $post->platforms()->attach($platformId);
             }
         }
         
@@ -123,9 +121,7 @@ class PostRepository implements PostRepositoryInterface
         
         // Update platforms if provided
         if (isset($newDetails['platform_ids']) && is_array($newDetails['platform_ids'])) {
-            $pivotData = array_fill(0, count($newDetails['platform_ids']), ['platform_status' => 'active']);
-            $syncData = array_combine($newDetails['platform_ids'], $pivotData);
-            $post->platforms()->sync($syncData);
+            $post->platforms()->sync($newDetails['platforms_ids']);
         }
         
         // Load the platforms relationship
