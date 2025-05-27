@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Posts;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePostRequest extends FormRequest
+class StorePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true; // Using policy in controller
+        return true; // Using auth middleware already
     }
 
     /**
@@ -22,12 +22,12 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string|max:255',
-            'content' => 'sometimes|string',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
             'image_url' => 'nullable|url',
-            'scheduled_time' => 'sometimes|date',
-            'status' => 'sometimes|in:draft,scheduled,published',
-            'platform_ids' => 'sometimes|array',
+            'scheduled_time' => 'required|date',
+            'status' => 'required|in:draft,scheduled,published',
+            'platform_ids' => 'required|array',
             'platform_ids.*' => 'exists:platforms,id',
         ];
     }

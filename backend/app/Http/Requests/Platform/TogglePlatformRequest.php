@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Platform;
 
-class DeletePostRequest extends FormRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class TogglePlatformRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return true; // Using policy in controller
     }
 
     /**
@@ -19,6 +21,9 @@ class DeletePostRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'ids' => 'required|array',
+            'ids.*' => 'exists:platforms,id',
+        ];
     }
-}
+} 

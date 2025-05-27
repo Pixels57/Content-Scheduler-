@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Interfaces\PlatformRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Http\Requests\Platform\TogglePlatformRequest;
 
 class PlatformController extends Controller
 {
@@ -90,21 +91,28 @@ class PlatformController extends Controller
     /**
      * Toggle active platforms for a user.
      */
-    public function toggleUserPlatforms(Request $request): JsonResponse
+    public function toggleUserPlatforms(TogglePlatformRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'platform_ids' => 'required|array',
-            'platform_ids.*' => 'exists:platforms,id',
-        ]);
+        $validated = $request->validated();
         
         $user = $request->user();
         
         // Here we would typically have a user_platform pivot table
         // For this simple example, we'll just return the platforms
+        foreach ($validated['platform_ids'] as $platformId) {
+            $platform = $this->platformRepository->getPlatformById($platformId);
+            if ($platform->status == 'active') {
+                $this->platformRepository->updatePlatform($platformId, ['status' => 'inactive']);
+            } else {
+                $this->platformRepository->updatePlatform($platformId, ['status' => 'active']);
+            }
+        }
+
+        $platforms = $this->platformRepository->getAllPlatforms();
         
         return response()->json([
             'message' => 'Platforms updated successfully',
-            'platforms' => $this->platformRepository->getAllPlatforms()->whereIn('id', $validated['platform_ids']),
+            'platforms' => $platforms,
         ]);
     }
 }

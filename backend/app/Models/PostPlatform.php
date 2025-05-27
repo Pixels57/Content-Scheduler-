@@ -28,6 +28,5 @@ class PostPlatform extends Pivot
     protected $fillable = [
         'post_id',
         'platform_id',
-        'platform_status',
     ];
 }

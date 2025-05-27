@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
-use App\Http\Requests\DeletePostRequest;
+use App\Http\Requests\Posts\StorePostRequest;
+use App\Http\Requests\Posts\UpdatePostRequest;
+use App\Http\Requests\Posts\DeletePostRequest;
 use App\Interfaces\PostRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
