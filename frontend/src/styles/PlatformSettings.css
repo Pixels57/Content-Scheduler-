@@ -1,0 +1,126 @@
+.platform-settings {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.platform-settings h1 {
+  margin-bottom: 1rem;
+  color: #2d3748;
+}
+
+.platform-description {
+  margin-bottom: 2rem;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.platform-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.platform-item {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.platform-label {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.platform-label:hover {
+  background-color: #f7fafc;
+}
+
+.platform-label input {
+  margin-right: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.platform-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.platform-name {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.platform-type {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.btn-save {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.btn-save:hover {
+  background-color: #2b6cb0;
+}
+
+.btn-save:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.loading {
+  padding: 2rem;
+  text-align: center;
+  background-color: white;
+  border-radius: 8px;
+  color: #718096;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: #fed7d7;
+  color: #c53030;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  padding: 1rem;
+  background-color: #c6f6d5;
+  color: #2f855a;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.no-platforms {
+  padding: 2rem;
+  text-align: center;
+  background-color: white;
+  border-radius: 8px;
+  color: #718096;
+}
+
+@media (max-width: 768px) {
+  .platform-settings {
+    padding: 1rem;
+  }
+} 
