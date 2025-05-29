@@ -56,4 +56,13 @@ interface PostRepositoryInterface
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getScheduledPostsToBeSent();
+    
+    /**
+     * Get analytics data for posts
+     * 
+     * @param int $userId
+     * @param array $filters Optional filters for date range
+     * @return array
+     */
+    public function getAnalytics(int $userId, array $filters = []): array;
 } 

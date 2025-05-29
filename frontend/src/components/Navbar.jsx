@@ -24,7 +24,10 @@ function Navbar() {
       <div className="navbar-menu">
         <Link to="/dashboard" className="navbar-item">Dashboard</Link>
         <Link to="/posts/new" className="navbar-item">New Post</Link>
+        <Link to="/analytics" className="navbar-item">Analytics</Link>
+        <Link to="/activity-logs" className="navbar-item">Activity Logs</Link>
         <Link to="/settings/platforms" className="navbar-item">Platforms</Link>
+        <Link to="/profile/settings" className="navbar-item">Profile</Link>
         <button onClick={handleLogout} className="navbar-item logout-btn">
           Logout
         </button>

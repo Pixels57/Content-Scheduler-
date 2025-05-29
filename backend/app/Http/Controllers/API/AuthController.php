@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\AuthServiceInterface;
+use App\Services\ActivityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,14 +18,23 @@ class AuthController extends Controller
     protected $authService;
     
     /**
+     * The activity logger instance.
+     *
+     * @var ActivityLogger
+     */
+    protected $activityLogger;
+    
+    /**
      * Create a new controller instance.
      *
      * @param AuthServiceInterface $authService
+     * @param ActivityLogger $activityLogger
      * @return void
      */
-    public function __construct(AuthServiceInterface $authService)
+    public function __construct(AuthServiceInterface $authService, ActivityLogger $activityLogger)
     {
         $this->authService = $authService;
+        $this->activityLogger = $activityLogger;
     }
     
     /**
@@ -39,6 +49,9 @@ class AuthController extends Controller
         ]);
 
         $result = $this->authService->register($validated);
+        
+        // Log the login after registration
+        $this->activityLogger->logLogin($result['user']->id);
 
         return response()->json([
             'message' => 'User registered successfully',
@@ -58,6 +71,9 @@ class AuthController extends Controller
         ]);
 
         $result = $this->authService->login($validated);
+        
+        // Log the login activity
+        $this->activityLogger->logLogin($result['user']->id);
 
         return response()->json([
             'message' => 'User logged in successfully',
@@ -71,6 +87,9 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
+        // Log the logout activity before actually logging out
+        $this->activityLogger->logLogout();
+        
         $this->authService->logout($request->user());
 
         return response()->json([
@@ -100,6 +119,9 @@ class AuthController extends Controller
         ]);
 
         $user = $this->authService->updateProfile($request->user(), $validated);
+        
+        // Log the profile update
+        $this->activityLogger->logProfileUpdate($validated);
 
         return response()->json([
             'message' => 'Profile updated successfully',

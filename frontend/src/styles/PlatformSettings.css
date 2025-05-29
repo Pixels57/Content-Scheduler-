@@ -10,9 +10,110 @@
 }
 
 .platform-description {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   color: #4a5568;
   line-height: 1.5;
+}
+
+.platform-instructions {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background-color: #ebf8ff;
+  border-left: 4px solid #4299e1;
+  border-radius: 4px;
+  color: #2c5282;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.btn-add-platform {
+  padding: 0.6rem 1.2rem;
+  background-color: #38a169;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-add-platform:hover {
+  background-color: #2f855a;
+}
+
+.add-platform-form {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.add-platform-form h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #2d3748;
+  font-size: 1.25rem;
+}
+
+.add-platform-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.add-platform-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.add-platform-form input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.add-platform-form input:focus {
+  border-color: #3182ce;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+.add-platform-form .input-help {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.btn-create {
+  padding: 0.75rem 1.5rem;
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-create:hover {
+  background-color: #2b6cb0;
+}
+
+.btn-create:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
 }
 
 .platform-list {
@@ -27,6 +128,54 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.platform-inactive {
+  background-color: #f7fafc;
+  opacity: 0.7;
+  box-shadow: none;
+  border: 1px solid #edf2f7;
+}
+
+.platform-inactive .platform-name,
+.platform-inactive .platform-type,
+.platform-inactive .platform-limit {
+  color: #a0aec0;
+}
+
+.platform-inactive .platform-label:hover {
+  background-color: #edf2f7;
+}
+
+.platform-status {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  display: inline-block;
+  margin-top: 0.5rem;
+  width: fit-content;
+}
+
+.platform-status.active {
+  background-color: #c6f6d5;
+  color: #2f855a;
+}
+
+.platform-status.inactive {
+  background-color: #e2e8f0;
+  color: #718096;
+}
+
+.platform-content {
+  flex: 1;
+}
+
+.platform-actions {
+  padding-right: 1.25rem;
 }
 
 .platform-label {
@@ -35,6 +184,7 @@
   padding: 1.25rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  width: 100%;
 }
 
 .platform-label:hover {
@@ -61,6 +211,32 @@
 .platform-type {
   font-size: 0.875rem;
   color: #718096;
+  margin-bottom: 0.25rem;
+}
+
+.platform-limit {
+  font-size: 0.8rem;
+  color: #a0aec0;
+}
+
+.btn-delete {
+  padding: 0.5rem 0.8rem;
+  background-color: #f56565;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-delete:hover {
+  background-color: #e53e3e;
+}
+
+.btn-delete:disabled {
+  background-color: #feb2b2;
+  cursor: not-allowed;
 }
 
 .btn-save {
@@ -122,5 +298,16 @@
 @media (max-width: 768px) {
   .platform-settings {
     padding: 1rem;
+  }
+  
+  .platform-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .platform-actions {
+    padding: 0 1.25rem 1.25rem;
+    display: flex;
+    justify-content: flex-end;
   }
 } 

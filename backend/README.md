@@ -59,3 +59,34 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Setting Up the Scheduler
+
+To enable automatic publishing of scheduled posts, you need to set up the Laravel scheduler to run regularly:
+
+### On Linux/Mac (production server):
+
+Add this Cron entry to your server:
+
+```bash
+* * * * * cd /path-to-your-project/backend && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### On Windows for development:
+
+Open a new Command Prompt window and run:
+
+```bash
+cd /path/to/your/project/backend
+php artisan schedule:run
+```
+
+Or create a scheduled task that runs this command every minute.
+
+### For local testing:
+
+You can manually trigger the command that processes scheduled posts:
+
+```bash
+php artisan app:process-scheduled-posts
+```

@@ -109,16 +109,51 @@ function PostEditor() {
   };
   
   const handlePlatformToggle = (platformId) => {
-    setFormData(prev => {
-      const newPlatformIds = prev.platform_ids.includes(platformId)
-        ? prev.platform_ids.filter(id => id !== platformId)
-        : [...prev.platform_ids, platformId];
-        
-      return {
-        ...prev,
-        platform_ids: newPlatformIds
-      };
-    });
+    // Find the platform
+    const platform = platforms.find(p => p.id === platformId);
+    
+    // Only allow toggling if platform is active
+    if (platform && platform.status === 'active') {
+      // Special handling for Instagram
+      if (platform.type === 'instagram') {
+        // If trying to enable Instagram but no image is provided
+        if (!formData.platform_ids.includes(platformId) && !formData.image_url) {
+          // Show warning and ask user to confirm
+          const wantsToProceed = window.confirm(
+            'Instagram posts require an image. Do you want to select Instagram now and add an image later?'
+          );
+          
+          if (!wantsToProceed) {
+            return; // Don't add Instagram if user cancels
+          }
+          
+          // Highlight the image upload section
+          setTimeout(() => {
+            const imageElement = document.getElementById('image');
+            if (imageElement) {
+              imageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 300);
+        }
+      }
+      
+      // Toggle the platform selection
+      setFormData(prev => {
+        const newPlatformIds = prev.platform_ids.includes(platformId)
+          ? prev.platform_ids.filter(id => id !== platformId)
+          : [...prev.platform_ids, platformId];
+          
+        return {
+          ...prev,
+          platform_ids: newPlatformIds
+        };
+      });
+    }
+  };
+  
+  // Check if platform is inactive
+  const isPlatformInactive = (platform) => {
+    return platform.status === 'inactive';
   };
   
   const handleImageUpload = (e) => {
@@ -153,6 +188,15 @@ function PostEditor() {
     if (isOverCharacterLimit()) {
       const { limit, platform } = getCharacterLimit();
       setError(`Content exceeds the character limit (${limit}) for ${platform}`);
+      return false;
+    }
+    
+    // Check if Instagram is selected but no image is uploaded
+    const instagramPlatform = platforms.find(p => p.type === 'instagram');
+    if (instagramPlatform && 
+        formData.platform_ids.includes(instagramPlatform.id) && 
+        !formData.image_url) {
+      setError('Instagram posts require an image. Please upload an image.');
       return false;
     }
     
@@ -200,11 +244,32 @@ function PostEditor() {
       }
       navigate('/dashboard');
     } catch (err) {
-      setError(
-        err.response?.data?.message || 
-        'Failed to save post. Please check your inputs and try again.'
-      );
       console.error('Error saving post:', err);
+      
+      // Handle validation errors from backend
+      if (err.response?.data?.errors) {
+        const errors = err.response.data.errors;
+        
+        // Check for Instagram-specific image validation error
+        if (errors.image_url && errors.image_url.includes('Instagram')) {
+          setError('Instagram posts require an image. Please upload an image.');
+          
+          // Scroll to the image upload section
+          document.getElementById('image').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          // Handle other validation errors
+          const errorMessage = Object.values(errors)
+            .flat()
+            .join(' ');
+          setError(errorMessage || 'Validation failed. Please check your inputs.');
+        }
+      } else {
+        // Handle generic errors
+        setError(
+          err.response?.data?.message || 
+          'Failed to save post. Please check your inputs and try again.'
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -270,8 +335,13 @@ function PostEditor() {
         </div>
         
         <div className="form-group">
-          <label htmlFor="image">Image Upload</label>
-          <div className="image-upload-container">
+          <label htmlFor="image">
+            Image Upload
+            {formData.platform_ids.includes(platforms.find(p => p.type === 'instagram')?.id) && (
+              <span className="required-badge">Required for Instagram</span>
+            )}
+          </label>
+          <div className={`image-upload-container ${formData.platform_ids.includes(platforms.find(p => p.type === 'instagram')?.id) && !formData.image_url ? 'instagram-required' : ''}`}>
             <input
               type="file"
               id="image"
@@ -280,14 +350,24 @@ function PostEditor() {
               onChange={handleImageUpload}
               className="image-upload-input"
             />
-            <label htmlFor="image" className="image-upload-button">
-              Choose Image
+            <label htmlFor="image" className={`image-upload-button ${formData.platform_ids.includes(platforms.find(p => p.type === 'instagram')?.id) && !formData.image_url ? 'instagram-required-button' : ''}`}>
+              {formData.platform_ids.includes(platforms.find(p => p.type === 'instagram')?.id) && !formData.image_url ? 'Choose Image (Required for Instagram)' : 'Choose Image'}
             </label>
             {formData.image_url && (
               <button 
                 type="button" 
                 className="clear-image-button"
-                onClick={() => setFormData(prev => ({ ...prev, image_url: '' }))}
+                onClick={() => {
+                  // Add confirmation if Instagram is selected
+                  const instagramPlatform = platforms.find(p => p.type === 'instagram');
+                  if (instagramPlatform && formData.platform_ids.includes(instagramPlatform.id)) {
+                    if (window.confirm('Removing this image will prevent posting to Instagram. Continue?')) {
+                      setFormData(prev => ({ ...prev, image_url: '' }));
+                    }
+                  } else {
+                    setFormData(prev => ({ ...prev, image_url: '' }));
+                  }
+                }}
               >
                 Clear Image
               </button>
@@ -295,7 +375,33 @@ function PostEditor() {
           </div>
           {formData.image_url && (
             <div className="image-preview">
-              <img src={formData.image_url} alt="Preview" />
+              <img 
+                src={formData.image_url} 
+                alt="Preview" 
+                onError={(e) => {
+                  console.error("Error loading image:", e);
+                  e.target.src = "https://via.placeholder.com/300x200?text=Image+Load+Error";
+                  e.target.style.opacity = "0.5";
+                }}
+              />
+              {formData.image_url.startsWith('http') && (
+                <div className="cloudinary-info">
+                  <span className="cloudinary-badge">Cloudinary Image</span>
+                  <a 
+                    href={formData.image_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="view-original"
+                  >
+                    View Original
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+          {formData.platform_ids.includes(platforms.find(p => p.type === 'instagram')?.id) && !formData.image_url && (
+            <div className="platform-warning">
+              ⚠️ Instagram posts require an image - Please upload one now!
             </div>
           )}
         </div>
@@ -304,11 +410,15 @@ function PostEditor() {
           <label>Platforms</label>
           <div className="platform-selector">
             {platforms.map(platform => (
-              <label key={platform.id} className="platform-option">
+              <label 
+                key={platform.id} 
+                className={`platform-option ${isPlatformInactive(platform) ? 'platform-inactive' : ''}`}
+              >
                 <input
                   type="checkbox"
                   checked={formData.platform_ids.includes(platform.id)}
                   onChange={() => handlePlatformToggle(platform.id)}
+                  disabled={isPlatformInactive(platform)}
                 />
                 <span>{platform.name}</span>
                 {platformLimits[platform.type] && (
@@ -316,9 +426,27 @@ function PostEditor() {
                     ({platformLimits[platform.type]} chars)
                   </span>
                 )}
+                {platform.type === 'instagram' && (
+                  <span className="platform-requirement">
+                    Requires image
+                  </span>
+                )}
+                {isPlatformInactive(platform) && (
+                  <span className="platform-status-indicator">Inactive</span>
+                )}
               </label>
             ))}
           </div>
+          {platforms.some(p => p.status === 'inactive') && (
+            <div className="platform-note">
+              Inactive platforms are disabled and cannot be selected
+            </div>
+          )}
+          {formData.platform_ids.includes(platforms.find(p => p.type === 'instagram')?.id) && !formData.image_url && (
+            <div className="platform-warning">
+              ⚠️ Instagram posts require an image - please upload one below
+            </div>
+          )}
         </div>
         
         <div className="form-group">
@@ -371,7 +499,10 @@ function PostEditor() {
           />
           {formData.status === 'scheduled' && (
             <div className="field-hint">
-              Set the date and time when this post should be published
+              Set the date and time when this post should be published.
+              <div className="rate-limit-info">
+                <strong>Note:</strong> You can schedule up to 10 posts per day.
+              </div>
             </div>
           )}
         </div>

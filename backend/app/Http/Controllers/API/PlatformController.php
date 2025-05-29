@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Interfaces\PlatformRepositoryInterface;
+use App\Services\ActivityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\Platform\TogglePlatformRequest;
@@ -18,14 +19,23 @@ class PlatformController extends Controller
     protected $platformRepository;
     
     /**
+     * The activity logger instance.
+     *
+     * @var ActivityLogger
+     */
+    protected $activityLogger;
+    
+    /**
      * Create a new controller instance.
      *
      * @param PlatformRepositoryInterface $platformRepository
+     * @param ActivityLogger $activityLogger
      * @return void
      */
-    public function __construct(PlatformRepositoryInterface $platformRepository)
+    public function __construct(PlatformRepositoryInterface $platformRepository, ActivityLogger $activityLogger)
     {
         $this->platformRepository = $platformRepository;
+        $this->activityLogger = $activityLogger;
     }
     
     /**
@@ -35,7 +45,9 @@ class PlatformController extends Controller
     {
         $platforms = $this->platformRepository->getAllPlatforms();
         
-        return response()->json($platforms);
+        return response()->json([
+            'data' => $platforms
+        ]);
     }
 
     /**
@@ -44,11 +56,21 @@ class PlatformController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:platforms,name',
             'type' => 'required|string|max:255',
+            'character_limit' => 'sometimes|integer|min:1',
         ]);
 
         $platform = $this->platformRepository->createPlatform($validated);
+        
+        // Log platform creation
+        $this->activityLogger->log(
+            'create', 
+            'platform', 
+            $platform->id, 
+            'Created new platform: ' . $platform->name,
+            $validated
+        );
         
         return response()->json($platform, 201);
     }
@@ -69,11 +91,21 @@ class PlatformController extends Controller
     public function update(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255|unique:platforms,name,' . $id,
             'type' => 'sometimes|string|max:255',
+            'character_limit' => 'sometimes|integer|min:1',
         ]);
 
         $platform = $this->platformRepository->updatePlatform($id, $validated);
+        
+        // Log platform update
+        $this->activityLogger->log(
+            'update', 
+            'platform', 
+            $id, 
+            'Updated platform: ' . $platform->name,
+            $validated
+        );
         
         return response()->json($platform);
     }
@@ -83,6 +115,16 @@ class PlatformController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
+        $platform = $this->platformRepository->getPlatformById($id);
+        
+        // Log platform deletion before deleting
+        $this->activityLogger->log(
+            'delete', 
+            'platform', 
+            $id, 
+            'Deleted platform: ' . $platform->name
+        );
+        
         $this->platformRepository->deletePlatform($id);
         
         return response()->json(null, 204);
@@ -109,6 +151,9 @@ class PlatformController extends Controller
         }
 
         $platforms = $this->platformRepository->getAllPlatforms();
+        
+        // Log platform settings change
+        $this->activityLogger->logPlatformSettingsChange($validated['platform_ids']);
         
         return response()->json([
             'message' => 'Platforms updated successfully',

@@ -22,8 +22,8 @@ class TogglePlatformRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ids' => 'required|array',
-            'ids.*' => 'exists:platforms,id',
+            'platform_ids' => 'required|array',
+            'platform_ids.*' => 'exists:platforms,id',
         ];
     }
 } 

@@ -7,8 +7,10 @@ use App\Http\Requests\Posts\StorePostRequest;
 use App\Http\Requests\Posts\UpdatePostRequest;
 use App\Http\Requests\Posts\DeletePostRequest;
 use App\Interfaces\PostRepositoryInterface;
+use App\Services\ActivityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -20,14 +22,23 @@ class PostController extends Controller
     protected $postRepository;
     
     /**
+     * The activity logger instance.
+     *
+     * @var ActivityLogger
+     */
+    protected $activityLogger;
+    
+    /**
      * Create a new controller instance.
      *
      * @param PostRepositoryInterface $postRepository
+     * @param ActivityLogger $activityLogger
      * @return void
      */
-    public function __construct(PostRepositoryInterface $postRepository)
+    public function __construct(PostRepositoryInterface $postRepository, ActivityLogger $activityLogger)
     {
         $this->postRepository = $postRepository;
+        $this->activityLogger = $activityLogger;
     }
     
     /**
@@ -55,6 +66,9 @@ class PostController extends Controller
         
         $post = $this->postRepository->createPost($validated, $request->user()->id);
         
+        // Log the post creation
+        $this->activityLogger->logPostCreation($post->id, $validated);
+        
         return response()->json($post, 201);
     }
 
@@ -66,9 +80,14 @@ class PostController extends Controller
         $post = $this->postRepository->getPostById($id);
         
         // Check if the post belongs to the authenticated user
-        $this->authorize('view', $post);
+        if($post->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         
-        return response()->json($post);
+        return response()->json([
+            'status' => 'success',
+            'data' => $post
+        ]);
     }
 
     /**
@@ -79,13 +98,21 @@ class PostController extends Controller
         $post = $this->postRepository->getPostById($id);
         
         // Check if the post belongs to the authenticated user
-        $this->authorize('update', $post);
+        if($post->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         
         $validated = $request->validated();
         
         $updatedPost = $this->postRepository->updatePost($id, $validated);
         
-        return response()->json($updatedPost);
+        // Log the post update
+        $this->activityLogger->logPostUpdate($id, $validated);
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => $updatedPost
+        ]);
     }
 
     /**
@@ -96,12 +123,33 @@ class PostController extends Controller
         $post = $this->postRepository->getPostById($id);
         
         // Check if the post belongs to the authenticated user
-        $this->authorize('delete', $post);
+        if($post->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
 
         $validated = $request->validated();
         
+        // Log the post deletion before actually deleting
+        $this->activityLogger->logPostDeletion($id, $post->title);
+        
         $this->postRepository->deletePost($id);
         
-        return response()->json(null, 204);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Post deleted successfully'
+        ], 200);
+    }
+
+    /**
+     * Get post analytics data
+     */
+    public function analytics(Request $request): JsonResponse
+    {
+        $analytics = $this->postRepository->getAnalytics($request->user()->id, []);
+        
+        return response()->json([
+            'status' => 'success',
+            'data' => $analytics
+        ]);
     }
 }

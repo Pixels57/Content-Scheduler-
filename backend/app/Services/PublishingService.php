@@ -134,11 +134,27 @@ class PublishingService implements PublishingServiceInterface
         $posts = $this->postRepository->getScheduledPostsToBeSent();
         $count = 0;
         
+        Log::info("Found {$posts->count()} scheduled posts due for publishing");
+        
         foreach ($posts as $post) {
+            Log::info("Processing post #{$post->id} - '{$post->title}'", [
+                'scheduled_time' => $post->scheduled_time->format('Y-m-d H:i:s'),
+                'current_time' => now()->format('Y-m-d H:i:s'),
+                'status' => $post->status
+            ]);
+            
             $success = $this->processPost($post);
+            
             if ($success) {
                 $count++;
+                Log::info("Successfully published post #{$post->id}");
+            } else {
+                Log::warning("Failed to publish post #{$post->id}");
             }
+        }
+        
+        if ($count === 0 && $posts->count() === 0) {
+            Log::info("No scheduled posts found due for publishing");
         }
         
         return $count;

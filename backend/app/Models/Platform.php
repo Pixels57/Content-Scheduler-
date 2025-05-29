@@ -19,6 +19,7 @@ class Platform extends Model
         'name',
         'type',
         'status',
+        'character_limit',
     ];
     
     /**

@@ -93,12 +93,18 @@
 
 .post-item {
   display: flex;
-  padding: 1.5rem;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  gap: 1rem;
   align-items: center;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .post-status {
@@ -126,7 +132,8 @@
 }
 
 .post-info {
-  flex-grow: 1;
+  flex: 1;
+  padding-right: 15px;
 }
 
 .post-title {
@@ -174,7 +181,7 @@
   align-items: center;
   width: 24px;
   height: 24px;
-  background-color: #3182ce;
+  background-color: #e53e3e;
   color: white;
   border-radius: 50%;
   font-size: 0.75rem;
@@ -184,8 +191,13 @@
 
 .calendar-legend {
   display: flex;
-  justify-content: center;
-  margin-top: 1rem;
+  flex-direction: column;
+  margin-top: 1.5rem;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f7fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
 
 .legend-item {
@@ -193,14 +205,82 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #718096;
+  color: #4a5568;
 }
 
 .legend-indicator {
   width: 12px;
   height: 12px;
-  background-color: #3182ce;
+  background-color: #e53e3e;
   border-radius: 50%;
+}
+
+.status-legend {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.status-legend h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+.status-legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.status-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #4a5568;
+  padding-right: 0.5rem;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+/* Status indicator colors - matching the post status colors */
+.status-indicator.status-draft {
+  background-color: #e2e8f0;
+  border: 1px solid #a0aec0;
+}
+
+.status-indicator.status-scheduled {
+  background-color: #bee3f8;
+  border: 1px solid #3182ce;
+}
+
+.status-indicator.status-published {
+  background-color: #c6f6d5;
+  border: 1px solid #38a169;
+}
+
+/* Make the actual post statuses more visually distinct too */
+.post-status.status-draft {
+  background-color: #e2e8f0;
+  color: #4a5568;
+  border: 1px solid #a0aec0;
+}
+
+.post-status.status-scheduled {
+  background-color: #bee3f8;
+  color: #2c5282;
+  border: 1px solid #3182ce;
+}
+
+.post-status.status-published {
+  background-color: #c6f6d5;
+  color: #276749;
+  border: 1px solid #38a169;
 }
 
 .no-posts {
@@ -222,6 +302,29 @@
 .error-message {
   background-color: #fed7d7;
   color: #c53030;
+}
+
+/* Post thumbnail styles */
+.post-thumbnail {
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  background-color: #f8f8f8;
+}
+
+.post-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.post-thumbnail img:hover {
+  transform: scale(1.1);
 }
 
 @media (max-width: 768px) {
@@ -251,10 +354,276 @@
   .post-actions {
     margin-top: 1rem;
     width: 100%;
+    display: flex;
+    gap: 0.5rem;
   }
   
-  .btn-edit {
-    width: 100%;
+  .btn-edit, .btn-delete {
+    flex: 1;
     text-align: center;
+    margin-left: 0;
   }
+  
+  .day-post-item .post-actions {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+}
+
+/* Calendar day posts */
+.calendar-day-posts {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.day-posts-header {
+  margin-bottom: 1rem;
+  color: #2d3748;
+  font-size: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-day-posts {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.close-day-posts:hover {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.day-posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.day-post-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: #f7fafc;
+  border-radius: 6px;
+  border-left: 4px solid #e53e3e;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.day-post-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.day-post-item .post-title {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.day-post-item .post-time {
+  font-size: 0.875rem;
+  color: #718096;
+  margin-bottom: 0.25rem;
+}
+
+.day-post-item .post-thumbnail {
+  width: 50px;
+  height: 50px;
+}
+
+.no-day-posts {
+  padding: 1rem;
+  background-color: #f7fafc;
+  border-radius: 6px;
+  color: #718096;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Highlight selected day in calendar */
+.selected-day {
+  background-color: #fff5f5 !important;
+  border: 2px solid #e53e3e !important;
+  border-radius: 8px !important;
+  color: #c53030 !important;
+  font-weight: bold !important;
+}
+
+/* Improve the calendar appearance */
+.react-calendar {
+  width: 100%;
+  border: none !important;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.react-calendar__tile {
+  padding: 12px 6px;
+  position: relative;
+}
+
+.react-calendar__tile:hover {
+  background-color: #edf2f7;
+  border-radius: 8px;
+}
+
+.react-calendar__tile--active {
+  background-color: #edf2f7 !important;
+  color: #4a5568 !important;
+}
+
+/* List view legend */
+.list-legend {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f7fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.list-legend h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+/* Filter actions */
+.filter-actions {
+  display: flex;
+  align-items: flex-end;
+  margin-left: 0.5rem;
+}
+
+.clear-filters {
+  padding: 0.5rem 0.75rem;
+  background-color: #edf2f7;
+  color: #4a5568;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  margin-top: auto;
+}
+
+.clear-filters:hover {
+  background-color: #e2e8f0;
+}
+
+.filter-info {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #fff5f5;
+  border-left: 3px solid #e53e3e;
+  color: #c53030;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.calendar-filter-info {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+/* Delete button styles */
+.btn-delete {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #fff5f5;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.btn-delete:hover {
+  background-color: #e53e3e;
+  color: white;
+}
+
+/* Delete confirmation modal */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.delete-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 500px;
+}
+
+.delete-modal h3 {
+  margin-top: 0;
+  color: #e53e3e;
+  margin-bottom: 1rem;
+}
+
+.delete-modal p {
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  color: #4a5568;
+}
+
+.delete-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-cancel {
+  padding: 0.5rem 1rem;
+  background-color: #edf2f7;
+  color: #4a5568;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #e2e8f0;
+}
+
+.btn-confirm-delete {
+  padding: 0.5rem 1rem;
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-confirm-delete:hover {
+  background-color: #c53030;
 } 

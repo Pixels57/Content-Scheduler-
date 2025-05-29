@@ -81,15 +81,19 @@
 }
 
 .image-preview {
-  margin-top: 1rem;
-  text-align: center;
+  margin-top: 10px;
+  position: relative;
+  max-width: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 .image-preview img {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 4px;
-  border: 1px solid #e2e8f0;
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
 }
 
 .image-upload-container {
@@ -169,6 +173,16 @@
   font-style: italic;
 }
 
+.rate-limit-info {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #ebf8ff;
+  border-left: 3px solid #4299e1;
+  border-radius: 4px;
+  font-style: normal;
+  color: #2c5282;
+}
+
 .platform-selector {
   display: flex;
   flex-wrap: wrap;
@@ -194,6 +208,44 @@
 .platform-option input {
   width: auto;
   margin-right: 0.5rem;
+}
+
+/* Inactive platform styling */
+.platform-inactive {
+  opacity: 0.6;
+  background-color: #f7fafc;
+  border: 1px dashed #cbd5e0;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.platform-inactive:hover {
+  background-color: #f7fafc;
+}
+
+.platform-inactive span {
+  color: #a0aec0;
+}
+
+.platform-inactive input[type="checkbox"] {
+  cursor: not-allowed;
+}
+
+.platform-status-indicator {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background-color: #e2e8f0;
+  color: #718096;
+  border-radius: 9999px;
+  margin-left: 0.5rem;
+  font-weight: 500;
+}
+
+.platform-note {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: #718096;
+  font-style: italic;
 }
 
 .btn-submit {
@@ -233,6 +285,43 @@
   color: #c53030;
 }
 
+/* Cloudinary image info */
+.cloudinary-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.cloudinary-badge {
+  background: #4285f4;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.view-original {
+  color: white;
+  text-decoration: none;
+  padding: 3px 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.view-original:hover {
+  background: rgba(255, 255, 255, 0.3);
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .post-editor {
     padding: 1rem;
@@ -247,4 +336,121 @@
     flex-direction: column;
     gap: 0.75rem;
   }
+}
+
+/* Add styles for Instagram image requirement */
+
+.platform-requirement {
+  margin-left: 5px;
+  font-size: 0.8em;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.platform-warning {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 10px;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+/* Required badge for image upload when Instagram is selected */
+.required-badge {
+  background-color: #f8d7da;
+  color: #721c24;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+/* Special styling for image upload when Instagram is selected but no image */
+.image-upload-container.instagram-required {
+  border: 2px dashed #e53e3e;
+  padding: 1rem;
+  border-radius: 4px;
+  background-color: rgba(254, 215, 215, 0.3);
+}
+
+.image-upload-button.instagram-required-button {
+  background-color: #f56565;
+  color: white;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+.image-upload-button.instagram-required-button:hover {
+  background-color: #e53e3e;
+}
+
+/* Pulse animation for required elements */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Result message for validation test */
+.result-message {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.result-message.success {
+  background-color: #c6f6d5;
+  color: #276749;
+  border: 1px solid #9ae6b4;
+}
+
+.result-message.error {
+  background-color: #fed7d7;
+  color: #c53030;
+  border: 1px solid #feb2b2;
+}
+
+.result-message h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.explanation-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f7fafc;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.explanation-section h3 {
+  margin-top: 0;
+  color: #2d3748;
+}
+
+.explanation-section ul {
+  margin-top: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.explanation-section li {
+  margin-bottom: 0.5rem;
+  color: #4a5568;
 } 

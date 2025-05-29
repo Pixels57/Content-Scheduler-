@@ -40,6 +40,8 @@ class PlatformRepository implements PlatformRepositoryInterface
         return Platform::create([
             'name' => $platformData['name'],
             'type' => $platformData['type'],
+            'character_limit' => $platformData['character_limit'] ?? 280, // Default to 280 characters
+            'status' => $platformData['status'] ?? 'active', // Default to active
         ]);
     }
     

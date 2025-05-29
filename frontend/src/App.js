@@ -8,6 +8,9 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import PostEditor from './components/PostEditor';
 import PlatformSettings from './components/PlatformSettings';
+import ProfileSettings from './components/ProfileSettings';
+import Analytics from './components/Analytics';
+import ActivityLog from './components/ActivityLog';
 import Navbar from './components/Navbar';
 
 // Styles
@@ -108,6 +111,33 @@ function App() {
               element={
                 isAuthenticated ? 
                 <PlatformSettings /> : 
+                <Navigate to="/login" />
+              } 
+            />
+            
+            <Route 
+              path="/profile/settings" 
+              element={
+                isAuthenticated ? 
+                <ProfileSettings /> : 
+                <Navigate to="/login" />
+              } 
+            />
+            
+            <Route 
+              path="/analytics" 
+              element={
+                isAuthenticated ? 
+                <Analytics /> : 
+                <Navigate to="/login" />
+              } 
+            />
+            
+            <Route 
+              path="/activity-logs" 
+              element={
+                isAuthenticated ? 
+                <ActivityLog /> : 
                 <Navigate to="/login" />
               } 
             />

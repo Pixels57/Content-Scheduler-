@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\ActivityLogController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PlatformController;
 use App\Http\Controllers\API\PostController;
@@ -29,8 +30,14 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Posts
     Route::apiResource('posts', PostController::class);
+    Route::get('/post-analytics', [PostController::class, 'analytics']);
     
     // Platforms
     Route::apiResource('platforms', PlatformController::class);
     Route::post('/platforms/toggle', [PlatformController::class, 'toggleUserPlatforms']);
+    
+    // Activity Logs
+    Route::get('/activity-logs', [ActivityLogController::class, 'index']);
+    Route::get('/activity-logs/summary', [ActivityLogController::class, 'summary']);
+    Route::get('/activity-logs/filters', [ActivityLogController::class, 'filters']);
 }); 

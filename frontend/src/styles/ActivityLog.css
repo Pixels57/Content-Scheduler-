@@ -1,0 +1,304 @@
+.activity-log-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.activity-log-container h1 {
+  margin-bottom: 2rem;
+  color: #2d3748;
+}
+
+/* Summary Cards */
+.activity-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.summary-card:nth-child(1) {
+  border-left: 4px solid #4299e1;
+}
+
+.summary-card:nth-child(2) {
+  border-left: 4px solid #48bb78;
+}
+
+.summary-card:nth-child(3) {
+  border-left: 4px solid #ed8936;
+}
+
+.summary-card h3 {
+  margin-top: 0;
+  font-size: 1rem;
+  color: #4a5568;
+}
+
+.summary-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0.5rem 0;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+/* Filters */
+.filters-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filters-container h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  color: #2d3748;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background-color: #f7fafc;
+  color: #4a5568;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 1px #4299e1;
+}
+
+.clear-filters-btn {
+  padding: 0.5rem 1rem;
+  background-color: #edf2f7;
+  color: #4a5568;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.clear-filters-btn:hover {
+  background-color: #e2e8f0;
+}
+
+/* Activity Logs Table */
+.activity-logs {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.activity-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.activity-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #4a5568;
+}
+
+.activity-table tbody tr:hover {
+  background-color: #f7fafc;
+}
+
+/* Action and Entity styling */
+.action-cell, .entity-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-icon, .entity-icon {
+  font-size: 1.25rem;
+}
+
+.action-name, .entity-name {
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.entity-id {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+/* Action colors */
+.action-create {
+  color: #38a169;
+}
+
+.action-update {
+  color: #3182ce;
+}
+
+.action-delete {
+  color: #e53e3e;
+}
+
+.action-login {
+  color: #805ad5;
+}
+
+.action-logout {
+  color: #718096;
+}
+
+/* Entity type colors */
+.entity-post {
+  color: #3182ce;
+}
+
+.entity-platform {
+  color: #38a169;
+}
+
+.entity-profile {
+  color: #805ad5;
+}
+
+.entity-settings {
+  color: #ed8936;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.page-number, .pagination-btn {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  color: #4a5568;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-number:hover, .pagination-btn:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.page-number.active {
+  background-color: #4299e1;
+  color: white;
+  border-color: #4299e1;
+}
+
+.page-number.ellipsis {
+  background-color: transparent;
+  border: none;
+  cursor: default;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading, Error and No Data */
+.loading, .error-message, .no-logs {
+  padding: 2rem;
+  text-align: center;
+  background-color: white;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  background-color: #fed7d7;
+  color: #c53030;
+}
+
+.no-logs {
+  color: #718096;
+  font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .activity-log-container {
+    padding: 1rem;
+  }
+  
+  .filters-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .activity-table th:nth-child(3),
+  .activity-table td:nth-child(3) {
+    display: none; /* Hide entity column on small screens */
+  }
+  
+  .pagination {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .page-numbers {
+    order: -1;
+  }
+} 
